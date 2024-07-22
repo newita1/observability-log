@@ -1,0 +1,39 @@
+# Cargar en /opt/synthetic/monitor.d
+- type: browser
+  id: busqueda_avanzada_recepcion
+  name: busqueda_avanzada_recepcion
+  schedule: '@every 5m'
+  tags: ["Region"]
+  playwright_options:
+    acceptDownloads: false
+    mode: "minimal"
+  screenshots: "only-on-failure"
+  ignore_https_errors: true
+  source:
+    inline:
+      script: |-
+        step('01. Load Webpage', async () =>{
+          await page.goto('http://url/Account/Login');
+        });
+
+        step('02. Login User', async () =>{
+          await page.getByLabel('Usuario').fill('Usuario');
+          await page.getByLabel('Contraseña').fill('Contraseña');
+          await page.locator('input[value="Log in"]').click();
+        });
+
+        step('03. Load HomePage', async () =>{
+          await page.locator('span', {hasText: 'CASINO'}).click({timeout: 30000});
+          await page.locator('xpath=//*[@id="page-wrapper"]/div[2]/div[2]/button').click({timeout: 30000});
+        });
+
+        step('04. Get User Data', async () =>{
+          await page.getByLabel('Cliente', { exact: true }).fill('Nombre');
+          await page.getByText('Hombre').click();
+          await page.locator('button').filter({ hasText: 'Buscar' }).click();
+        });
+
+        step('05. Validate User Data', async () =>{
+          const texto_validar = await page.innerText('#DataTables_Table_0');
+          expect(texto_validar).toContain("DNI");
+        })

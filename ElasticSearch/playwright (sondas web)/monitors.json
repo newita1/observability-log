@@ -1,0 +1,35 @@
+// ruta /opt/scripts
+[
+    {
+        "monitor": "registro_horario",
+        "interval": 5, 
+        "iterations": 4,
+        "number_steps_availability": 3,
+        "number_steps_slow": 2,
+        "number_monitor_availability": 2,
+        "number_monitor_slow": 2,
+        "monitor_max_duration": 120,
+        "regions": 1,
+        "steps_number": 3,
+        "steps": [
+            {
+                "name": "01. Load web page",
+                "minor_threshold": 8.72, 
+                "major_threshold": 10.72,
+                "order": 1
+            },
+            {
+                "name": "02. Fill user data",
+                "minor_threshold": 11.07,
+                "major_threshold": 13.07,
+                "order": 2
+            },
+            {
+                "name": "03. Login validation",
+                "minor_threshold": 8.72, 
+                "major_threshold": 10.72,
+                "order": 3
+            }
+        ]
+    }
+]

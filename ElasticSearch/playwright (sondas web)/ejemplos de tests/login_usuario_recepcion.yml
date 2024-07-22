@@ -1,0 +1,28 @@
+# Cargar en /opt/synthetic/monitor.d
+- type: browser
+  id: login_usuario_recepcion
+  name: login_usuario_recepcion
+  schedule: '@every 5m'
+  tags: ["Region"]
+  playwright_options:
+    acceptDownloads: false
+    mode: "minimal"
+  screenshots: "only-on-failure"
+  ignore_https_errors: true
+  source:
+    inline:
+      script: |-
+        step('01. Load Webpage', async () =>{
+          await page.goto('http://url/Account/Login');
+        });
+
+        step('02. Login', async () =>{
+          await page.getByLabel('Usuario').fill('Usuario');
+          await page.getByLabel('Contraseña').fill('Contraseña');
+          await page.locator('input[value="Log in"]').click();
+        });
+
+        step('03. Load HomePage', async () =>{
+          const texto_validar = await page.innerText('.gray-bg');
+          expect(texto_validar).toContain("Contenido");	
+        });

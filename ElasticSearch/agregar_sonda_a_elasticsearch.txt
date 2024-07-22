@@ -3,3 +3,5 @@
     2. Filebeat: Recoge logs, permite procesarlos en cliente
     3. Metricbeat: Recoge metricas de equipos (CPU,RAM,Disco..)
     4. APM: A través del agente de elastic recoge emtrias de aplicaciones y users 
+
+--> Se agrega la sonda al fichero monitors.json con el nombre y numero de pasos y la config de cada uno

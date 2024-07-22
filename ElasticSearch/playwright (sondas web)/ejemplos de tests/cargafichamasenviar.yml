@@ -1,0 +1,47 @@
+# Cargar en /opt/synthetic/monitor.d
+- type: browser
+  id: carga_ficha_enviar_recepcion
+  name: carga_ficha_enviar_recepcion
+  schedule: '@every 5m'
+  tags: ["Region"]
+  playwright_options:
+    acceptDownloads: false
+    mode: "minimal"
+  screenshots: "only-on-failure"
+  ignore_https_errors: true
+  source:
+    inline:
+      script: |-
+        step('01. Load Webpage', async () =>{
+          await page.goto('http://url/Account/Login');
+        });
+
+        step('02. Login User', async () =>{
+          await page.getByLabel('Usuario').fill('Usuario');
+          await page.getByLabel('Contraseña').fill('Contraseña');
+          await page.locator('input[value="Log in"]').click();
+        });
+
+        step('03. Load HomePage', async () =>{
+          await page.locator('span', {hasText: 'CASINO'}).click();
+          await page.locator('#ClienteRecepcion_TextoBusqueda').fill('DNI');
+          await page.locator('#ClienteRecepcion_TextoBusqueda').press('Enter');
+        });
+
+        step('04. Send Entree', async () =>{
+          await page.locator('a').filter({ hasText: 'Captacion [001]' }).click();
+          await page.locator('li').filter({ hasText: 'Captacion [001]' }).click();
+          await page.locator('xpath=//*[@id="page-wrapper"]/div[2]/div[8]/button').click();
+          await page.locator('xpath=//*[@id="undefined"]/div[5]/div[7]/button[2]').click();
+
+          const isVisible = await page.locator('text=Cliente en sala ¿Desea').isVisible();
+          if (isVisible) {
+              await page.locator('button:has-text("Aceptar")').click();
+          }
+        });
+
+        step('05. Validate User Data', async () =>{
+          await page.locator('.refreshEntradas').click();
+          const texto_validar = await page.innerText('#GridEntradasTable_wrapper');
+          expect(texto_validar).toContain("DNI");
+        })
