@@ -51,3 +51,13 @@ ________________________________________________________________________________
     4. Escogemos el servicio que sera el que de el estado al host
     4.1. Agregamos el "Explicit hosts"
     5. Hacemos un "Reschedule check" del servicio para que se actualice el estado del host
+
+_________________________________________________________________________________________________________________________
+
+--> COMO FUNCIONAN LAS NOTIFICATIONS Y COMO TRABAJARLOS
+    Cuando creas una rule de notifications y se la asignas a un host, tienes primero que ver que sus condiciones coincidan con las del host.
+    En caso de que no se reciba ninguna notificación sobre el host al que esta marcando la rule, se puede ir a la maquina del site donde esta el host,
+    entrar en la ruta /opt/omd/site/var/log, y dentro de notify.log, se puede ver con que reglas matchea.
+    Si lo que pasa es que llegan correos sin tener una rule asignada, tambien es posible que tengan una dirección mail fallback configurada, que es para que Cuando
+    no coincide ninguna rule se envie por defecto un correo a X mail.
+
