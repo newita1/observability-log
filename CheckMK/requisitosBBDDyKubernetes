@@ -1,0 +1,264 @@
+ORACLE
+
+Requerimientos:
+
+    Necesitamos que se cree un usuario (a poder ser el mismo en todas las BBDD) con los siguientes permisos:
+
+sqlplus> create user checkmk identified by myPassword;
+
+sqlplus> grant select_catalog_role to checkmk;
+
+sqlplus> grant create session to checkmk;
+
+ 
+
+        En caso de multi-tenant databases
+
+sqlplus> alter user c##checkmk set container_data=all container=current;
+
+sqlplus> grant select_catalog_role to c##checkmk container=all;
+
+sqlplus> grant create session to c##checkmk container=all;
+
+ 
+
+    Para que el agente de Checkmk pueda conectar contra la BBDD se necesitará el sqlnet.ora y el tnsnames.ora
+
+ 
+
+tnsnames.ora
+
+MYINST1
+
+  (DESCRIPTION =
+
+    (ADDRESS = (PROTOCOL = TCP)(HOST = 127.0.0.1)(PORT = 1521))
+
+    (CONNECT_DATA =
+
+      (SERVER = DEDICATED)
+
+      (SERVICE_NAME = MYINST1_ALIAS)
+
+    )
+
+  )
+
+ 
+
+ 
+
+La información que saca el plugin:
+
+    ORACLE tablespaces: perfomance data for DB time
+    ORACLE tablespaces: perfomance data for file IO (Bytes read/written)
+    ORACLE tablespaces: perfomance data for file IO (Number of read/write requests)
+    ORACLE tablespaces: perfomance data for memory
+    ORACLE tablespaces: perfomance data for wait classes
+    Oracle Clusterware: Cluster Resources
+    Oracle Clusterware: Version Information
+    Oracle Clusterware: Voting Check
+    Oracle Data-Guard: Apply and Transport Lag
+    Oracle Database: Custom SQLs
+    Oracle Database: Jobs
+    Oracle Database: Locks
+    Oracle Database: Log Switch Activity
+    Oracle Database: Long Active Sessions
+    Oracle Database: Number of Active Sessions
+    Oracle Database: Processes
+    Oracle Database: Recovery Area
+    Oracle Database: Version
+    Oracle Instance: Status of Database
+    Oracle Instance: Undo Retention
+    Oracle Instance: Uptime of Database
+    Oracle Tablespaces: General Information
+    Oracle Tablespaces: Perfomance Data
+    Oracle: ASM Disk Groups
+    Oracle: Checkpoint and User Managed Backup State of Datafiles
+    Oracle: RMAN Backup Status
+
+_________________________________________________________________________________________________________________________
+
+Microsoft SQL Server
+
+Requerimientos MSSQLServer:
+
+    Necesitamos que se cree un usuario (a poder ser el mismo en todas las BBDD) con los siguientes permisos:
+
+mssql> USE master;
+
+      CREATE USER checkmk WITH PASSWORD = 'MyPassword123';
+
+      GO
+
+ 
+
+                mssql> USE master;
+
+      GRANT CONNECT ANY DATABASE TO checkmk;
+
+      GO
+
+ 
+
+Se puede encontrar más información en el siguiente enlace https://docs.checkmk.com/latest/en/monitoring_mssql.html
+
+ 
+
+La información que saca el plugin:
+
+    MS SQL Database: Connections
+    MS SQL Database: Properties
+    MS SQL Server: Blocked Sessions
+    MS SQL Server: Cache Hit Ratio
+    MS SQL Server: Locks per Batch
+    MS SQL Server: Page Activity
+    MS SQL Tablespaces: Locks per Second
+    MS SQL Tablespaces: Size Information
+    MS SQL Tablespaces: Size of Data- and Logfiles
+    MS SQL Tablespaces: Successful Backups
+    MS SQL Tablespaces: Successful Backups (by Type)
+    MS SQL Tablespaces: Transactions per Second
+    MS SQL: Availability Groups
+    MS SQL: General State
+    MS SQL: SQL Statistics Values
+    MS SQL: Size of Datafiles
+    MS SQL: Size of Transaction Logs
+    MSSQL Database: Jobs
+    MSSQL Database: Mirroring
+    MSSQL Server: Page Life Expectancy (PLE)
+
+_________________________________________________________________________________________________________________________
+
+
+Mysql
+
+Requerimientos MySQL:
+
+    Necesitamos que se cree un usuario (a poder ser el mismo en todas las BBDD) con los siguientes permisos:
+
+ 
+
+mysql> CREATE USER 'checkmk'@'localhost' IDENTIFIED BY 'MyPassword';
+
+mysql> GRANT SELECT, SHOW DATABASES ON *.* TO 'checkmk'@'localhost';
+
+ 
+
+        En caso de que esté configurada la replicación:
+
+mysql> GRANT REPLICATION CLIENT ON *.* TO 'checkmk'@'localhost';
+
+ 
+
+Se puede encontrar más información en el siguiente enlace https://docs.checkmk.com/latest/en/monitoring_mysql.html
+
+ 
+
+La información que saca el plugin:
+
+§  MySQL: Capacity
+
+§  MySQL: Galera Cluster Addresses (Startup)
+
+§  MySQL: Galera Donor
+
+§  MySQL: Galera Size
+
+§  MySQL: Galera Status
+
+§  MySQL: Galera Sync Status
+
+§  MySQL: IO Statistics of InnoDB Engine
+
+§  MySQL: Maximum Connection Usage since Startup
+
+§  MySQL: Sessions
+
+§  MySQL: Slave Sync Status
+
+§  MySQL: Status of Daemon
+
+§  MySQL: Version
+
+_________________________________________________________________________________________________________________________
+
+
+Kubernetes
+
+Para monitorizar kubernetes, lo que se hace es desplegar dos daemonsets y un deployment. Los daemonsets recogen métricas tanto de los nodos físicos, como de los pods y containers que corren, y se exponen mediante el deployment (cluster collector).
+
+El despliegue está enpaquetado en un helm, por lo que el despliegue no es muy complicado. Requeriremos de lo siguiente:
+
+ 
+
+    Facilitar la siguiente información
+        Tipo de clúster
+            k8s vanilla (kubernetes)
+                AKS
+                EKS
+                GKE
+                etc..
+            Openshift
+            k3s..
+        Versión del cluster de kubernetes.
+        Información sobre que ingress usáis para exponer servicios, o si lo hacéis por load balancer o nodeport.
+    Despliegue HELM
+        https://docs.checkmk.com/latest/en/monitoring_kubernetes.html
+            En cuanto nos facilitéis información del primer punto, os daremos las parametrizaciones concretas para vuestro entorno.
+    Una vez desplegado, necesitaremos:
+        Token que se ha generado en el despliegue del deployment
+        URL donde se ha expuesto el servicio del cluster collector
+        URL de la api de kubelet
+
+Con esto, generaremos un host que será el nombre del cluster, y un directorio donde automáticamente, se irán generando y eliminando hosts en función de los despliegues activos en el cluster de kubernetes.
+
+Los datos se extraeran de la api del cluster collector, y de la kubelet API.
+
+_________________________________________________________________________________________________________________________
+
+
+PostgreSQL
+
+Requerimientos PostreSQL:
+
+    Necesitamos que se cree un usuario (a poder ser el mismo en todas las BBDD) con los siguientes permisos:
+
+pg_read_all_settings
+
+pg_read_all_stats
+
+pg_stat_scan_tables
+
+               
+
+        En caso de que haya múltiples instancias por servidor, serán necesarios los ficheros db.env y .pgpass por cada instancia:
+
+z0QKP0yVaDlDcKJW-image.png
+
+
+ 
+
+La información que saca el plugin:
+
+·         PostgreSQL: Bloat
+
+·         PostgreSQL: Connection Time
+
+·         PostgreSQL: Connections
+
+·         PostgreSQL: Instances
+
+·         PostgreSQL: Last Vacuum and Analyze for Tables
+
+·         PostgreSQL: Locks
+
+·         PostgreSQL: Process Count
+
+·         PostgreSQL: Query Duration
+
+·         PostgreSQL: Sessions
+
+·         PostgreSQL: Size
+
+·         PostgreSQL: Statistics

@@ -1,0 +1,82 @@
+    Mover este archivo al dispositivo a monitorizar y según el sistema operativo instalarlo: 
+
+ 
+
+Linux: ejecutar el comando rpm -U ruta_del_archivo 
+
+ 
+
+La documentación oficial completa se puede encontrar en el siguiente link. https://docs.checkmk.com/latest/en/agent_linux.html#install 
+
+ 
+
+Para comprobar que se ha instalado correctamente, lo primero que hay que hacer es comprobar la versión de systemd. Esto se comprueba con el siguiente comando: 
+
+systemctl –version 
+
+ 
+
+Si la salida del comando es parecida a la siguiente es que systemd esta activo:  
+
+ 
+
+systemd 245 (245.4-4ubuntu3.15) 
+
+ 
+
+Si la versión que sale del comando es inferior a la 219, revisar la documentación, concretamente el punto 4.3. 
+
+ 
+
+A continuación, comprobar la versión del agente con el siguiente comando:  
+
+ 
+
+cmk-agent-ctl –version 
+
+ 
+
+Si la salida del comando es parecida a la siguiente, el agente está instalado correctamente: 
+cmk-agent-ctl 2.1.0b1 
+
+ 
+
+Finalmente, para comprobar que el agente esta escuchando por el puerto 6556, comprobar esto con el siguiente comando: 
+
+ 
+
+ss -tulpn | grep 6556 
+
+ 
+
+Si la salida es parecida a la siguiente, el agente está funcionando correctamente: 
+
+ 
+
+tcp	LISTEN	0	1024	0.0.0.0:6556	0.0.0.0:*	users:(("cmk-agent-ctl",pid=1861810,fd=9)) 
+
+_________________________________________________________________________________________________________________________
+
+REGISTRO DEL AGENTE
+LINUX
+Para el registro del agente con Linux, debemos ejecutar (con permisos de root) el siguiente comando
+
+cmk-update-agent register -v
+
+Nos solicitará el nombre del host, tal y como está introducido en Checkmk. Luego nos solicitará el usuario para registrar, que será cmkadmin y posteriormente la contraseña.
+
+Para verificar el correcto registro, tenemos dos opciones:
+
+Desde el host:
+
+Ejecutamos el comando cmk-update-agent -v
+
+Nos debería dar algo similar a esto: (donde el Target Hash debe coincidir con el del agente que hemos creado en Checkmk) 
+
+
+WINDOWS
+Para el registro abrir consola de comandos con permisos de administrador y ejecutar:
+
+"C:\Program Files (x86)\checkmk\service\check_mk_agent.exe" updater register (esta es la ruta por defecto)
+
+Misma operación que con Linux, hay que indicar hostname y usuario registrador (cmkadmin)

@@ -61,3 +61,25 @@ ________________________________________________________________________________
     Si lo que pasa es que llegan correos sin tener una rule asignada, tambien es posible que tengan una dirección mail fallback configurada, que es para que Cuando
     no coincide ninguna rule se envie por defecto un correo a X mail.
 
+_________________________________________________________________________________________________________________________
+
+--> MIGRAR PLUGINS DE UN CHECKMK A OTRO
+    1. Meter la carpeta de scripts en un tar con los parametros zcf.
+    2. Pasar el tar a la otra maquina con scp
+    3. Descomprimir el archivo en la misma ruta de scripts pero de la nuev amaquina con los parametros xpf
+    4. Comrpobar los permisos con ls -lia
+    EN CASO DE QUE EL DUEÑO DEL FICHERO SEA OTRO QUE NO SEA ROOT
+    1. chown -h root:root (nombre del plugin)
+
+_________________________________________________________________________________________________________________________
+
+--> CONFIGURAR OVA PARA HA
+    1. Accedemos a la maquina 1 de la ova y presionamos F1
+    2. Se abrira la pantalla de Basic Configuration donde tenemos que presionar enter a Network Configuration
+    3. Introducimos la ip de la maquina 1
+    4. Introducmos la mascara y el gateway de la maquina 1
+    5. Accedemos a Device password y establecemos un password
+    6. Accedemos a Web COnfiguration y marcamos enable
+    7. Repetimos el proceso anterior en Console Login (lo ponemos Enable)
+    8. Accedemos a Root Access via SSH y lo ponemos en enable y asignamos una contraseña
+    9. VAmos a maquina 2 y hacemos los mismos pasos

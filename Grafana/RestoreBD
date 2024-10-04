@@ -1,0 +1,17 @@
+Restore BD corrupta / "database is locked"
+
+En caso de que se detectar problemas con la BD de Grafana (errores de BD corrupta, o de tipo "database is locked"), se puede realizar un backup del grafana.db (aparentemente corrupto), para posteriormente realizar un restore de la BD dejándola accesible de nuevo.
+
+Para ello han de realizarse los siguientes pasos:
+
+    Parar el proceso de Grafana. Si el Grafana es un pod de K8s, se debe de dejar parado y con 0 réplicas para que no levante, hasta que realicemos el restore de la BD
+    Copiar el fichero de BD "grafana.db" ubicado en la ruta "/var/lib/grafana/" a otro directorio a modo de backup. En el caso de tratarse de un pod de K8s, en los workers se encuentran montados todos los NFS de los PVC de Grafana en el directorio "/grafana-nfs-openebs"
+    Una vez realizada la copia anterior, ejecutar los siguientes comandos para realizar un clone del grafana.db con el comando sqlite3:
+
+    1. sqlite3 grafana.db '.clone grafana-new.db' 
+    2. mv grafana.db grafana-old.db 
+    3. mv grafana-new.db grafana.db
+
+    Copiar el fichero grafana.db que hemos generado en el paso anterior a la ruta /var/lib/grafana del servidor/pod, y arrancar de nuevo el proceso de Grafana o arrancar pod
+
+Con estos pasos el problema debería estar solventado y se debería poder acceder al Grafana correctamente de nuevo.
